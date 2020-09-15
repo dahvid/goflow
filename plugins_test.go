@@ -2,7 +2,9 @@ package goflow
 
 import (
 	"testing"
+	"path"
 	"fmt"
+	"os"
 )
 
 
@@ -20,10 +22,20 @@ func TestBadParams(t *testing.T) {
 }
 
 func TestOpening(t *testing.T) {
-	paths := []string{"/home/david/go/src/github.com/dahvid/goflow/test_plugins"}
-	plugs,err := LoadComponents(paths, NewFactory())
+	test_plugs := path.Join(os.Getenv("GOPATH"),"bin")
+	paths := []string{test_plugs}
+	factory := NewFactory()
+	plugs,err := LoadComponents(paths, factory)
 	if err != nil {
 		t.Error("Failed loading compononents in ./test_plugins",err)
 	}
 	fmt.Println("Opened plugs",plugs)
+	any,err := factory.Create("Plug1")
+	if err != nil {
+		t.Error("Failed to create object Plug1",err)
+	}
+	plug1 := any.(PlugIn)
+	fmt.Println(plug1.Info())
+
+
 }

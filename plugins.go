@@ -11,6 +11,11 @@ import (
 
 const plugInSuffix = `_goplug.so`
 
+type PlugIn interface {
+	Component
+	Info() map[string]string
+}
+
  
 // LoadComponents goes through all paths, opens all plugins in those paths
 // and loads them into factory
@@ -40,7 +45,7 @@ func LoadComponents(paths []string, factory *Factory) ([]string, error) {
 					log.Printf("Can't find symbol %s in plugin %s, error=%s.", name, plugpath, err.Error())
 					continue
 				}
-				constructor := symbol.(Constructor)
+				constructor := symbol.(func()(interface{},error))
 				anerr := factory.Register(name,constructor)
 				if anerr != nil {
 					log.Printf("Failed to register plugin %s, error=%s.", plugpath, err.Error())
